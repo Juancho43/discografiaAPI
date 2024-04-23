@@ -1,11 +1,15 @@
 package api.baldini.discografia.controllers;
 
+import api.baldini.discografia.dtos.CancionResponse;
+import api.baldini.discografia.dtos.CancionesResponse;
 import api.baldini.discografia.model.Cancion;
 import api.baldini.discografia.model.Disco;
 import api.baldini.discografia.services.CancionService;
 import api.baldini.discografia.services.CompositorService;
 import api.baldini.discografia.services.DiscoService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,17 +21,13 @@ public class CancionController {
     @Autowired
     private CancionService cancionService;
 
-    @Autowired
-    private DiscoService discoService;
-
-
     @GetMapping("/getAll")
-    public ArrayList<Cancion> getCanciones(){
-        return this.cancionService.getCanciones();
+    public CancionesResponse getCanciones(){
+        return cancionService.getCanciones();
     }
 
     @PostMapping("/new")
-    public Cancion saveCancion(@RequestBody Cancion cancion){
+    public ResponseEntity saveCancion(@RequestBody Cancion cancion){
         return this.cancionService.saveCancion(cancion);
     }
     @GetMapping("{id}")
@@ -36,17 +36,17 @@ public class CancionController {
     }
 
     @PutMapping("/update/{id}")
-    public Cancion updateCancionById(@PathVariable("id") Long id, @RequestBody Cancion request ){
+    public ResponseEntity updateCancionById(@PathVariable("id") Long id, @RequestBody Cancion request ){
         return cancionService.updateById(request, id);
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteCancionById(@PathVariable("id") Long id){
+    public ResponseEntity deleteCancionById(@PathVariable("id") Long id){
         boolean ok = cancionService.deleteCancionById(id);
         if (ok){
-            return "Cancion eliminada.";
+            return ResponseEntity.ok("Registro eliminado");
         }else{
-            return "Error";
+            return ResponseEntity.badRequest().body("No se pudo eliminar el registro.");
         }
     }
 
