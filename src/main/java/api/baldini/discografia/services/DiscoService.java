@@ -1,5 +1,7 @@
 package api.baldini.discografia.services;
 
+import api.baldini.discografia.dtos.DiscosResponse;
+import api.baldini.discografia.mappers.DiscoMapper;
 import api.baldini.discografia.model.Compositor;
 import api.baldini.discografia.model.Disco;
 import api.baldini.discografia.repositories.ICompositorRepository;
@@ -15,9 +17,11 @@ public class DiscoService {
     @Autowired
     IDiscoRepository discoRepository;
 
+    @Autowired
+    DiscoMapper discoMapper;
 
-    public ArrayList<Disco> getDiscos(){
-        return (ArrayList<Disco>) discoRepository.findAll();
+    public DiscosResponse getDiscos(){
+        return discoMapper.ListDiscosToDiscosResponse(discoRepository.findAll());
     }
 
     public Optional<Disco> getById(Long id){

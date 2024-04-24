@@ -1,10 +1,13 @@
 package api.baldini.discografia.controllers;
 
+import api.baldini.discografia.dtos.DiscosResponse;
 import api.baldini.discografia.model.Compositor;
 import api.baldini.discografia.model.Disco;
 import api.baldini.discografia.services.CompositorService;
 import api.baldini.discografia.services.DiscoService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -19,13 +22,14 @@ public class DiscoController {
     @Autowired
     private DiscoService discoService;
     @GetMapping("/getAll")
-    public ArrayList<Disco> getDiscos(){
-        return this.discoService.getDiscos();
+    public DiscosResponse getDiscos(){
+        return discoService.getDiscos();
     }
 
     @PostMapping("/new")
-    public Disco saveDisco(@RequestBody Disco disco){
-        return this.discoService.saveDisco(disco);
+    public ResponseEntity saveDisco(@RequestBody Disco disco){
+        discoService.saveDisco(disco);
+        return ResponseEntity.ok("Registro guardado");
     }
     @GetMapping("/{id}")
     public Optional<Disco> geyCompositorById(@PathVariable("id") Long id){
@@ -33,17 +37,20 @@ public class DiscoController {
     }
 
     @PutMapping("/update/{id}")
-    public Disco updateDiscoById(@PathVariable("id") Long id, @RequestBody Disco request ){
-        return discoService.updateById(request, id);
+    public ResponseEntity updateDiscoById(@PathVariable("id") Long id, @RequestBody Disco request ){
+        discoService.updateById(request, id);
+        return ResponseEntity.ok("Registro actualizado");
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteCompositorById(@PathVariable("id") Long id){
-        boolean ok = discoService.deleteDiscoById(id);
-        if (ok){
-            return "Disco eliminado.";
-        }else{
-            return "Error";
+    public ResponseEntity deleteCompositorById(@PathVariable("id") Long id){
+        try {
+            discoService.deleteDiscoById(id);
+            return ResponseEntity.ok("Registro eliminado");
+        }
+
+        catch(Exception ex) {
+            return ResponseEntity.badRequest().body("No se pudo eliminar el registro. ");
         }
     }
 
